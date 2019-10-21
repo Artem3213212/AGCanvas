@@ -1,0 +1,661 @@
+unit AG.Graphic.OpenGL;
+
+interface
+
+{$IFDEF FPC}
+  {$mode DELPHI}
+{$ENDIF}
+
+{$Define VampyreIL}
+
+uses
+  SysUtils,Classes,dglOpenGL,Windows,
+  {$IFDEF VampyreIL}ImagingOpenGL,{$ENDIF}
+  utsContext,utsTypes,utsTextBlock,utsFontCreatorGDI,utsFont,utsRendererOpenGL,utsUtils,
+  AG.Graphic.Parallel,AG.Types,
+  //Init Formats
+  Imaging,ImagingComponents,ImagingIO,ImagingUtility
+  ,ImagingFormats;
+
+type
+  EAGGLException=Exception;
+  EAGWGLException=Exception;
+
+  TAGOpenGlGraphicCore=class(TAGParallelGraphicCore)
+    protected              
+      tsContext:TtsContext;
+      tsRenderer:TtsRendererOpenGL;
+      tsFontCreator:TtsFontCreatorGDI;
+      Context:NativeUInt;
+      DC:HDC;
+      FBackColor:TAGFloatColor;
+      Size:TAGScreenVector;
+      fonts:array [0..256]of TtsFont;
+      procedure SetBackColor(color:TAGColor);override;
+      function GetBackColor:TAGColor;override;
+    public
+      destructor Destroy();override;
+      procedure Init(W,H:cardinal;hWindow:TAGWindowHandle);override;
+      procedure OnPaint();override;
+      procedure Resize(W,H:Word);override;
+      //2D                     
+      procedure Init2D();
+      function CreateBitMap(p:TStream):TAGBitMap;override;
+      procedure LoadFont(Name,Local:string;size:Single;font:TAGFont);override;
+      procedure ReleaseBitMap(b:TAGBitMap);override;
+      procedure DrawPoint(point:TAG2DVector;size:word;brush:TAGColor);override;
+      procedure DrawRectangle(rect:TAGCoord;size:word;brush:TAGColor);override;
+      procedure DrawElips(point,radaii:TAG2DVector;size:word;brush:TAGColor);override;
+      procedure DrawLine(point0,point1:TAG2DVector;size:word;brush:TAGColor);override;
+      procedure DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);override;    
+      procedure DrawText(text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);override;
+      procedure DrawBitmap(coord:TAGCoord;bitmap:TAGBitMap;opacity:byte=255;f:boolean=False);override;
+      procedure FillRectangle(rect:TAGCoord;brush:TAGColor);override;
+      procedure FillElips(point,radaii:TAG2DVector;brush:TAGColor);override;
+      procedure DrawTriangle(a,b,c:TAG2DVector);
+  end;
+
+implementation
+
+procedure RaiseGLExeption();inline;
+begin       
+  raise EAGGLException.Create('OpenGL error. Code: 0x'+IntToHex(glGetError(),8));
+end;
+
+procedure RaiseWGLExeption();inline;
+begin
+  raise EAGWGLException.Create('WGL error. Code: 0x'+IntToHex(GetLastError(),8));
+end;
+
+procedure TAGOpenGlGraphicCore.SetBackColor(color:TAGColor);
+begin
+  FBackColor:=color;
+end;
+
+function TAGOpenGlGraphicCore.GetBackColor:TAGColor;
+begin
+  Result:=FBackColor;
+end;
+            
+procedure Destroy_SubCall(Data:Pointer);
+var
+  i:integer;
+begin
+  with TAGOpenGlGraphicCore(Data) do
+  begin  
+    for i:=Low(fonts) to High(fonts)do
+      if Assigned(fonts[i]) then
+        FreeAndNil(fonts[i]);
+    FreeAndNil(tsFontCreator);
+    FreeAndNil(tsRenderer);
+    FreeAndNil(tsContext);
+  end;
+end;
+destructor TAGOpenGlGraphicCore.Destroy();
+begin
+  DoGraphic(self,Destroy_SubCall);
+  inherited;
+end;
+
+procedure Init_SubCall_InitGraphic(Data:Pointer);
+var
+  i:integer;
+begin
+  with TAGOpenGlGraphicCore(Data) do
+  begin
+    Context:=wglCreateContext(DC);
+    if Context=0 then
+      RaiseWGLExeption();
+    if wglMakeCurrent(DC,Context)then
+    begin       
+      ReadOpenGLCore;
+      glViewport(0,0,Size.X,Size.Y);
+      glEnable(GL_POINT_SMOOTH);
+      glEnable(GL_TEXTURE_2D);        
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+      glEnable(GL_MULTISAMPLE);
+      glPixelStorei(GL_RGBA_MODE,0);
+    end
+    else
+      RaiseWGLExeption();
+    tsContext:=TtsContext.Create;
+    tsRenderer:=TtsRendererOpenGL.Create(tsContext,TtsFormat.tsFormatAlpha8);
+    tsFontCreator:=TtsFontCreatorGDI.Create(tsContext);        
+    for i:=Low(fonts) to High(fonts)do
+      Pointer(fonts[i]):=nil;
+  end;
+end;
+procedure TAGOpenGlGraphicCore.Init(W,H:cardinal;hWindow:TAGWindowHandle);
+var
+  pf:PIXELFORMATDESCRIPTOR;
+begin
+  size:=TAGScreenVector.Create(W,H);
+  hwnd:=hWindow;
+  DC:=GetDC(hwnd);
+  FillChar(pf,SizeOf(pf),0);
+  with pf do
+  begin
+    nSize:=sizeof(PIXELFORMATDESCRIPTOR);
+    nVersion:=1;
+    dwFlags:=PFD_SUPPORT_OPENGL+PFD_DOUBLEBUFFER+PFD_DRAW_TO_WINDOW;
+    iPixelType:=PFD_TYPE_RGBA;
+    cColorBits:=16;
+    cAccumBits:=0;
+    cDepthBits:=16;
+    cStencilBits:=0;
+    iLayerType:=PFD_MAIN_PLANE;
+  end;
+  SetPixelFormat(DC,ChoosePixelFormat(DC,@pf),@pf);
+  DoGraphicSync(Pointer(self),Init_SubCall_InitGraphic);
+  LoadFont('Lucida Console','EN-en',24,AGFont_SystemFont);
+end;
+             
+procedure OnPaint_SubCall_InitGraphic(Data:Pointer);
+begin
+  with TAGFloatColor(Data^) do
+    glClearColor(R,G,B,A);
+
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity;
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity;
+end;
+procedure OnPaint_SubCall_FinishGraphic(Data:Pointer);
+begin
+  SwapBuffers(HDC(Data^));
+end;
+procedure TAGOpenGlGraphicCore.OnPaint();
+begin
+  DoGraphic(addr(FBackColor),OnPaint_SubCall_InitGraphic);
+  Init2D;
+
+  if Assigned(drawer) then
+    drawer(self);
+               
+  DoGraphic(addr(DC),OnPaint_SubCall_FinishGraphic);
+  Flush();
+end;
+
+procedure Resize_SubCall(Data:Pointer);
+begin
+  with TAGScreenVector(Data^) do
+    glViewport(0,0,X,Y);
+end;
+procedure TAGOpenGlGraphicCore.Resize(W,H:Word);
+begin     
+  Size.X:=W;
+  Size.Y:=H;
+  DoGraphic(addr(Size),Resize_SubCall);
+end;
+
+//2D
+procedure Init2D_SubGraphicCall(Data:Pointer);  
+var
+  m:TGLMatrixf4;
+begin
+  m[0,0]:=2/TAGScreenVector(Data^).X;
+  m[0,1]:=0;
+  m[0,2]:=0;
+  m[0,3]:=0;
+  m[1,0]:=0;
+  m[1,1]:=-2/TAGScreenVector(Data^).Y;
+  m[1,2]:=0;
+  m[1,3]:=0;
+  m[2,0]:=0;
+  m[2,1]:=0;
+  m[2,2]:=0;
+  m[2,3]:=0;
+  m[3,0]:=-1;
+  m[3,1]:=1;
+  m[3,2]:=0;
+  m[3,3]:=1;
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity;
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(@m);
+end;
+procedure TAGOpenGlGraphicCore.Init2D();
+begin
+  DoGraphic(addr(Size),Init2D_SubGraphicCall);
+end;
+
+{$IFDEF VampyreIL}
+procedure CreateBitMap_SubCall_Vampyre(Data:Pointer);
+begin
+  GLUint(Data^):=LoadGLTextureFromStream(TStream(Data^));
+end;     
+{$ENDIF}
+function TAGOpenGlGraphicCore.CreateBitMap(p:TStream):TAGBitMap;
+begin      
+{$IFDEF VampyreIL}
+  Pointer(Result):=p;
+  DoGraphicSync(addr(Result),CreateBitMap_SubCall_Vampyre);
+{$ELSE}
+  raise EAGGraphicCoreException.Create('Error in TAGOpenGlGraphicCore.CreateBitMap you need VampyreIL');
+{$ENDIF}
+end;
+ 
+type
+  TLoadFont_SubCallData=packed record
+    font:^TtsFont;
+    Size:Integer;
+    Name:^String;
+    FontCreator:TtsFontCreatorGDI;
+  end;
+  PLoadFont_SubCallData=^TLoadFont_SubCallData;
+procedure LoadFont_SubGraphicCall(Data:Pointer);
+var
+  m:TGLMatrixf4;
+begin          
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity;
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix;
+
+  m[0,0]:=1;
+  m[0,1]:=0;
+  m[0,2]:=0;
+  m[0,3]:=0;
+  m[1,0]:=0;
+  m[1,1]:=-1;
+  m[1,2]:=0;
+  m[1,3]:=0;
+  m[2,0]:=0;
+  m[2,1]:=0;
+  m[2,2]:=0;
+  m[2,3]:=0;
+  m[3,0]:=-1;
+  m[3,1]:=1;
+  m[3,2]:=0;
+  m[3,3]:=1;
+  glLoadMatrixf(@m);
+
+  with PLoadFont_SubCallData(Data)^ do
+    Font^:=FontCreator.GetFontByName(Name^,Size,[],TtsAntiAliasing.tsAANormal);
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.LoadFont(Name,Local:string;Size:single;font:TAGFont);
+var
+  Data:PLoadFont_SubCallData;
+begin
+  GetMem(Data,SizeOf(TLoadFont_SubCallData));
+  Data.font:=@fonts[font];
+  Data.Name:=@Name;                  
+  Data.Size:=Round(Size);
+  Data.FontCreator:=tsFontCreator;
+  DoGraphicSync(Data,LoadFont_SubGraphicCall);
+end;
+               
+procedure ReleaseBitMap_SubCall(Data:Pointer);
+begin
+  glDeleteTextures(1,Data);
+end;
+procedure TAGOpenGlGraphicCore.ReleaseBitMap(b:TAGBitMap);
+begin
+  DoGraphic(addr(b.OpenGL),ReleaseBitMap_SubCall);
+end;
+
+type
+  TDrawPoint_SubCallData=packed record
+    point:TAG2DVector;
+    size:word;
+    Color:TAGColor;
+  end;
+  PDrawPoint_SubCallData=^TDrawPoint_SubCallData;
+procedure DrawPoint_SubCall(Data:Pointer);
+begin
+  with PDrawPoint_SubCallData(Data)^ do
+  begin
+    glPointSize(Size);
+    glBegin(GL_POINTS);
+    glColor4ubv(addr(Color));
+    glVertex2fv(addr(Point));
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawPoint(point:TAG2DVector;size:word;brush:TAGColor);
+var
+  Data:PDrawPoint_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawPoint_SubCallData));
+  Data.point:=point;
+  Data.size:=size;
+  Data.Color:=brush;
+  DoGraphic(Data,DrawPoint_SubCall);
+end;
+
+type
+  TDrawRectangle_SubCallData=packed record
+    Size:Word;
+    Color:TAGColor;
+    Rect:TAGCoord;
+  end;
+  PDrawRectangle_SubCallData=^TDrawRectangle_SubCallData;   
+procedure DrawRectangle_GraphicSubCall(Data:Pointer);
+var             
+  S:Single;
+  i:TAG2DVector;
+  Vertex:array[0..9]of TAG2DVector;
+begin    
+  with PDrawRectangle_SubCallData(Data)^ do
+  begin
+    S:=Size/2;
+    with Rect do
+    begin
+      Vertex[0]:=TAG2DVector.Create(X+S,Y+S);
+      Vertex[1]:=TAG2DVector.Create(X-S,Y-S);
+      Vertex[2]:=TAG2DVector.Create(X+W-S,Y+S);
+      Vertex[3]:=TAG2DVector.Create(X+W+S,Y-S);
+      Vertex[4]:=TAG2DVector.Create(X+W-S,Y+H-S);
+      Vertex[5]:=TAG2DVector.Create(X+W+S,Y+H+S);
+      Vertex[6]:=TAG2DVector.Create(X+S,Y+H-S);
+      Vertex[7]:=TAG2DVector.Create(X-S,Y+H+S);
+      Vertex[8]:=Vertex[0];
+      Vertex[9]:=Vertex[1];
+    end;
+    glbegin(GL_TRIANGLE_STRIP);
+    glColor4ubv(addr(Color));
+    for i in Vertex do
+      with i do
+        glVertex2f(X,Y);
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawRectangle(Rect:TAGCoord;Size:Word;Brush:TAGColor);
+var
+  Data:PDrawRectangle_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawRectangle_SubCallData));
+  Data.Rect:=Rect;
+  Data.Size:=Size;
+  Data.Color:=Brush;
+  DoGraphic(Data,DrawRectangle_GraphicSubCall);
+end;
+       
+type
+  TDrawElips_SubCallData=packed record
+    point,radaii:TAG2DVector;
+    size:word;
+    Color:TAGColor;
+  end;
+  PDrawElips_SubCallData=^TDrawElips_SubCallData;
+procedure DrawElips_SubCall(Data:Pointer);
+var
+  i,st:integer;
+begin
+  with PDrawElips_SubCallData(Data)^ do
+  begin
+    with radaii do
+      if x>y then
+        st:=Round(x)
+      else
+        st:=Round(y);
+    glLineWidth(size);
+    glColor4ubv(addr(Color));
+    glBegin(GL_LINE_LOOP);
+    for i:=1 to st*2 do
+      glVertex2f(cos(i*pi/st)*radaii.X+point.X,sin(i*pi/st)*radaii.Y+point.Y);
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawElips(point,radaii:TAG2DVector;size:word;brush:TAGColor);
+var
+  Data:PDrawElips_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawElips_SubCallData));
+  Data.point:=point;
+  Data.radaii:=radaii;
+  Data.size:=size;
+  Data.Color:=brush;
+  DoGraphic(Data,DrawElips_SubCall);
+end;
+
+type
+  TDrawLine_SubCallData=packed record
+    point0,point1:TAG2DVector;
+    size:word;
+    Color:TAGColor;
+  end;
+  PDrawLine_SubCallData=^TDrawLine_SubCallData;
+procedure DrawLine_SubCall(Data:Pointer);
+begin
+  with PDrawLine_SubCallData(Data)^ do
+  begin
+    glLineWidth(Size);
+    glbegin(GL_LINES);
+    glColor4ubv(addr(Color));
+    glVertex2iv(addr(Point1));
+    glVertex2iv(addr(Point0));
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawLine(point0,point1:TAG2DVector;size:word;brush:TAGColor);
+var
+  Data:PDrawLine_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawLine_SubCallData));
+  Data.point0:=point0;                            
+  Data.point1:=point1;
+  Data.size:=size;
+  Data.Color:=brush;
+  DoGraphic(Data,DrawLine_SubCall);
+end;
+
+type
+  TDrawText_SubCallData=packed record
+    Text:PWideChar;
+    position:TAGScreenCoord;
+    Render:TtsRendererOpenGL;
+    font:TtsFont;//GLuint;
+    size:word;
+    Color:TAGColor;
+  end;
+  PDrawText_SubCallData=^TDrawText_SubCallData;
+procedure DrawText_SubCall(Data:Pointer);  
+var
+  block:TtsTextBlock;
+  m:TGLMatrixf4;
+begin
+  with PDrawText_SubCallData(Data)^ do
+  begin
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix;
+
+    m[0,0]:=1;
+    m[0,1]:=0;
+    m[0,2]:=0;
+    m[0,3]:=0;
+    m[1,0]:=0;
+    m[1,1]:=-1;
+    m[1,2]:=0;
+    m[1,3]:=0;
+    m[2,0]:=0;
+    m[2,1]:=0;
+    m[2,2]:=0;
+    m[2,3]:=0;
+    m[3,0]:=-1;
+    m[3,1]:=1;
+    m[3,2]:=0;
+    m[3,3]:=1;
+    glLoadMatrixf(@m[0,0]);
+
+    with position do
+      block:=Render.BeginBlock(X,Y,W,H,[TtsBlockFlag.tsBlockFlagWordWrap]);
+    try
+      block.HorzAlign:=TtsHorzAlignment.tsHorzAlignJustify;
+      block.ChangeFont(Font);
+      with TAGFloatColor(Color) do
+        block.ChangeColor(tsColor4f(R,G,B,A));
+      block.TextOutW(Text);
+    finally
+      Render.EndBlock(block);
+    end;
+    Freemem(Text);   
+    glBindTexture(GL_TEXTURE_2D,0);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);
+var
+  Data:PDrawText_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawText_SubCallData));
+  GetMem(Data.Text,(Length(text)+1)*2);
+  StrPCopy(Data.Text,text);
+  Data.position:=position;
+  Data.size:=size;
+  Data.font:=fonts[font];
+  Data.Render:=tsRenderer;
+  Data.Color:=brush;
+  DoGraphic(Data,DrawText_SubCall);
+  Init2D;
+end;
+
+procedure TAGOpenGlGraphicCore.DrawText(text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);
+begin
+  DrawText(text,TAGScreenCoord(position),size,font,brush);
+end;
+
+type
+  TDrawBitmap_SubCallData=packed record
+    coord:TAGCoord;
+    bitmap:GLUint;
+    opacity:byte;
+    mode:boolean;
+  end;
+  PDrawBitmap_SubCallData=^TDrawBitmap_SubCallData;
+procedure DrawBitmap_SubCall(Data:Pointer);
+begin   
+  with PDrawBitmap_SubCallData(Data)^ do
+  begin
+    glColor4d(1,1,1,opacity/255);
+
+    glBindTexture(GL_TEXTURE_2D,bitmap);
+    if mode then
+    begin
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    end
+    else
+    begin
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    end;                                
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP{GL_REPEAT});
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP{GL_REPEAT});
+    glBegin(GL_QUADS);
+    with coord do
+    begin
+      glTexCoord2f(0,0);
+      glVertex3f(X,Y,0);
+      glTexCoord2f(0,1);
+      glVertex2f(X,Y+H);
+      glTexCoord2f(1,1);
+      glVertex2f(X+W,Y+H);
+      glTexCoord2f(1,0);
+      glVertex2f(X+W,Y);
+    end;
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D,0);
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawBitmap(coord:TAGCoord;bitmap:TAGBitMap;opacity:byte=255;f:boolean=False);
+var
+  Data:PDrawBitmap_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawBitmap_SubCallData));
+  Data.coord:=coord;
+  Data.bitmap:=bitmap.OpenGL;
+  Data.opacity:=opacity;
+  Data.mode:=f;
+  DoGraphic(Data,DrawBitmap_SubCall);
+end;
+
+type
+  TFillRectangle_SubCallData=packed record
+    coord:TAGCoord;
+    Color:TAGColor;
+  end;
+  PFillRectangle_SubCallData=^TFillRectangle_SubCallData;
+procedure FillRectangle_SubCall(Data:Pointer);
+begin
+  with PFillRectangle_SubCallData(Data)^ do
+  begin
+    glColor4ubv(addr(Color));
+    glBegin(GL_QUADS);
+    with coord do
+    begin
+      glVertex3f(X,Y,0);
+      glVertex2f(X,Y+H);
+      glVertex2f(X+W,Y+H);
+      glVertex2f(X+W,Y);
+    end;
+    glEnd();
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.FillRectangle(rect:TAGCoord;brush:TAGColor);       
+var
+  Data:PFillRectangle_SubCallData;
+begin
+  GetMem(Data,SizeOf(TFillRectangle_SubCallData));
+  Data.coord:=rect;
+  Data.Color:=Brush;
+  DoGraphic(Data,FillRectangle_SubCall);
+end;
+
+type
+  TFillElips_SubCallData=packed record
+    point,radaii:TAG2DVector;
+    Color:TAGColor;
+  end;
+  PFillElips_SubCallData=^TFillElips_SubCallData;
+procedure FillElips_SubCall(Data:Pointer);
+var
+  i,st:integer;
+begin
+  with PFillElips_SubCallData(Data)^ do
+  begin
+    with radaii do
+      if x>y then
+        st:=Round(x)
+      else
+        st:=Round(y);
+    glColor4ubv(addr(Color));
+    glBegin(GL_POLYGON);
+    for i:=1 to st*2 do
+      glVertex2f(cos(i*pi/st)*radaii.X+point.X,sin(i*pi/st)*radaii.Y+point.Y);
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.FillElips(point,radaii:TAG2DVector;brush:TAGColor);
+var
+  Data:PFillElips_SubCallData;
+begin
+  GetMem(Data,SizeOf(TFillElips_SubCallData));
+  Data.point:=point;
+  Data.radaii:=radaii;
+  Data.Color:=brush;
+  DoGraphic(Data,FillElips_SubCall);
+end;
+
+procedure TAGOpenGlGraphicCore.DrawTriangle(a,b,c:TAG2DVector);
+begin
+
+end;
+
+initialization
+InitOpenGL;
+end.

@@ -1,0 +1,14 @@
+*.exe
+*.dll
+*.so
+*.map
+*.dres
+*.res
+*.tds
+*.dcu
+*.lib
+*.a
+*.o
+*.ocx
+*.tmp
+lib/

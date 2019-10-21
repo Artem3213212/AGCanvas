@@ -1,0 +1,9 @@
+[submodule "Imaging"]
+	path = Imaging
+	url = git@github.com:galfar/imaginglib.git
+[submodule "dglOpenGL"]
+	path = dglOpenGL
+	url = git@github.com:SaschaWillems/dglOpenGL.git
+[submodule "TextSuite"]
+	path = TextSuite
+	url = git@github.com:Artem3213212/TextSuite.git

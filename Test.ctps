@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="Test.ppr"/>
+        <FRMtype Value="0"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="16"/>
+        <UsageCount Value="32"/>
+      </Unit>
+      <Unit>
+        <Filename Value="form.pas"/>
+        <FRMtype Value="200"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <TopLine Value="40"/>
+        <CursorPos X="46" Y="63"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\AG.Graphic.OpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="613"/>
+        <CursorPos X="3" Y="653"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\main.conf"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\Imaging\Extras\Extensions\ImagingOpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="17"/>
+        <CursorPos X="2" Y="32"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\AG.Graphic.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="41" Y="17"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\include\wincontrol.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6494"/>
+        <CursorPos Y="6511"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\include\customform.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="141"/>
+        <CursorPos Y="165"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\include\application.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2231"/>
+        <CursorPos Y="2255"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\controls.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1834"/>
+        <CursorPos X="46" Y="2044"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\fpcsrc\rtl\objpas\sysutils\sysutilh.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <CursorPos X="28" Y="29"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\AG.Windows.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="154"/>
+        <CursorPos X="40" Y="237"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\fpcsrc\rtl\win\wininc\messages.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1211"/>
+        <CursorPos X="12" Y="1213"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\components\lz_OpenGL\source\glwin32wglcontext.pas"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="GLWin32WGLContext"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="30" Y="450"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\lcltype.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="LCLType"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="128"/>
+        <CursorPos X="3" Y="140"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\lmessages.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="LMessages"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="450"/>
+        <CursorPos X="11" Y="466"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\AG.Types.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="33"/>
+        <CursorPos X="24" Y="20"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsRendererOpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="198"/>
+        <CursorPos X="21" Y="219"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsContext.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="11"/>
+        <CursorPos X="27" Y="15"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsOpenGLUtils.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="61"/>
+        <CursorPos X="28" Y="49"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsFontCreatorGDI.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="619"/>
+        <CursorPos X="24" Y="632"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsUtils.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="15"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsTypes.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="133"/>
+        <CursorPos X="3" Y="146"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsGDI.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="190"/>
+        <CursorPos X="29" Y="203"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsFont.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="23"/>
+        <CursorPos X="15" Y="36"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\fpcsrc\rtl\inc\objpash.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="204"/>
+        <CursorPos X="23" Y="206"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsRenderer.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="48"/>
+        <CursorPos X="18" Y="54"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\TextSuite\utsTextBlock.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="100"/>
+        <CursorPos X="3" Y="100"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NoEngineLibs\dglOpenGL\dglOpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="11587"/>
+        <CursorPos X="3" Y="11600"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="lib\AG.Graphic.Parallel.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3"/>
+        <CursorPos X="44" Y="112"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\components\pl_VampyreImaging\source\ImagingOptions.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="23"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\components\pl_VampyreImaging\source\Extras\Extensions\ImagingOpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\lcl\graphics.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="73"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\codetyphon\typhon\components\BaseUtils\graphtype.pp"/>
+        <FRMtype Value="0"/>
+        <UnitName Value="GraphType"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="22"/>
+        <CursorPos X="3" Y="35"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Imaging\Extras\Extensions\ImagingOpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="669"/>
+        <CursorPos X="11" Y="688"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="TextSuite\utsFontCreatorGDI.pas"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="619"/>
+        <CursorPos X="28" Y="626"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <FRMtype Value="0"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="534"/>
+        <CursorPos X="5" Y="542"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Imaging\Source\ImagingOptions.inc"/>
+        <FRMtype Value="0"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory Count="22" HistoryIndex="21">
+      <Position1>
+        <Filename Value="form.pas"/>
+        <Caret Line="127" Column="43" TopLine="119"/>
+      </Position1>
+      <Position2>
+        <Filename Value="form.pas"/>
+        <Caret Line="39" Column="7" TopLine="31"/>
+      </Position2>
+      <Position3>
+        <Filename Value="form.pas"/>
+        <Caret Line="142" Column="6" TopLine="130"/>
+      </Position3>
+      <Position4>
+        <Filename Value="form.pas"/>
+        <Caret Line="148" Column="5" TopLine="129"/>
+      </Position4>
+      <Position5>
+        <Filename Value="form.pas"/>
+        <Caret Line="45" Column="3" TopLine="32"/>
+      </Position5>
+      <Position6>
+        <Filename Value="form.pas"/>
+        <Caret Line="55" Column="3" TopLine="42"/>
+      </Position6>
+      <Position7>
+        <Filename Value="form.pas"/>
+        <Caret Line="45" Column="3" TopLine="32"/>
+      </Position7>
+      <Position8>
+        <Filename Value="form.pas"/>
+        <Caret Line="57" Column="24" TopLine="42"/>
+      </Position8>
+      <Position9>
+        <Filename Value="form.pas"/>
+        <Caret Line="9" Column="3"/>
+      </Position9>
+      <Position10>
+        <Filename Value="form.pas"/>
+        <Caret Line="11" Column="90"/>
+      </Position10>
+      <Position11>
+        <Filename Value="form.pas"/>
+        <Caret Line="44" Column="50"/>
+      </Position11>
+      <Position12>
+        <Filename Value="form.pas"/>
+        <Caret Line="89" Column="69" TopLine="76"/>
+      </Position12>
+      <Position13>
+        <Filename Value="form.pas"/>
+        <Caret Line="11" Column="18"/>
+      </Position13>
+      <Position14>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="13" Column="28"/>
+      </Position14>
+      <Position15>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="43" Column="19" TopLine="39"/>
+      </Position15>
+      <Position16>
+        <Filename Value="form.pas"/>
+        <Caret Line="57" Column="5" TopLine="46"/>
+      </Position16>
+      <Position17>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="565" Column="142" TopLine="544"/>
+      </Position17>
+      <Position18>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="13" Column="28"/>
+      </Position18>
+      <Position19>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="43" Column="20" TopLine="32"/>
+      </Position19>
+      <Position20>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="228" Column="28" TopLine="217"/>
+      </Position20>
+      <Position21>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="221" Column="13" TopLine="217"/>
+      </Position21>
+      <Position22>
+        <Filename Value="Sources\AG.Graphic.OpenGL.pas"/>
+        <Caret Line="544" Column="19" TopLine="525"/>
+      </Position22>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches Count="1">
+      <Item1>
+        <Expression Value="Form1.Handle"/>
+      </Item1>
+    </Watches>
+  </Debugging>
+</CONFIG>
