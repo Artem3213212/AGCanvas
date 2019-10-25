@@ -5,10 +5,11 @@ unit unit1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, LMessages,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   AG.Types,
   AG.Graphic,
-  AG.Graphic.OpenGl;
+  AG.Graphic.OpenGl,
+  AG.Canvas;
 
 type
 
@@ -17,11 +18,9 @@ type
   TForm1 = class(TForm)
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
-    procedure FormPaint(Sender: TObject);
-    procedure FormResize(Sender: TObject); 
-    procedure ErasBkg(var Msg: TLMPaint); message LM_ERASEBKGND;
+    procedure FormShow(Sender: TObject);
   private
-
+    FTestCanvas:TAGCanvas;
   public
 
   end;
@@ -34,11 +33,10 @@ implementation
 {$R *.lfm}
 
 var
-  Core:TAGGraphicCore;
-  s:string='asdfasdfasdf';
   pic:TAGBitMap;
+  s:string='Hello...';
 
-procedure maindraw(Core:TAGGraphicCore);
+procedure TestDrawer(Core:TAGGraphicCore);
 const
   pos0:TAGScreenCoord=(X:300;Y:0;W:100;H:4000);
   pos1:TAGScreenCoord=(X:1000;Y:30;W:500;H:30);
@@ -68,34 +66,15 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Core:=TAGOpenGlGraphicCore.Create;
-  Core.BackColor:=BlueColor;
-  Core.drawer:=maindraw;
-  with Form1 do
-    Core.Init(Width,Height,Handle);
-  pic:=Core.CreateBitMapFromFile('8.bmp');
+  FTestCanvas:= TAGCanvas.Create(Self);
+  pic:=FTestCanvas.Core.CreateBitMapFromFile('8.bmp');
+  FTestCanvas.Core.drawer:= TestDrawer;
+  FTestCanvas.Parent:=Self;
+  FTestCanvas.Align:=alClient;
 end;
 
-var
-  LasPaint:Int64;
-procedure TForm1.FormPaint(Sender: TObject);
+procedure TForm1.FormShow(Sender: TObject);
 begin
-  if GetTickCount64-LasPaint>50/3 then
-    Core.OnPaint()
-  else
-    Sleep(1);
-  LasPaint:=GetTickCount64;
-end;
-
-procedure TForm1.FormResize(Sender: TObject);
-begin
-  Core.Resize(Form1.Width,Form1.Height);
-  Core.OnPaint();
-end;
-
-procedure TForm1.ErasBkg(var Msg: TLMPaint);
-begin
-  Msg.Result:=0;
 end;
 
 end.
