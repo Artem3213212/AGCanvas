@@ -15,10 +15,8 @@ type
   { TAGCanvas }
 
   TAGCanvas = class(TCustomControl)
-  private const MaxRate = 1000 div 60;
   private
     FLastPaint: Int64;
-    FLimitFPS: boolean;
   protected
     procedure Paint; override;
     procedure DoOnResize; override;
@@ -28,7 +26,6 @@ type
     Core: TAGGraphicCore;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property LimitFPS: boolean read FLimitFPS write FLimitFPS;
   end;
 
 var
@@ -42,7 +39,6 @@ constructor TAGCanvas.Create(AOwner: TComponent);
 begin
   inherited;
   Core:= TAGOpenGlGraphicCore.Create;
-  FLimitFPS:= false;
 end;
 
 destructor TAGCanvas.Destroy;
@@ -53,16 +49,7 @@ end;
 
 procedure TAGCanvas.Paint;
 begin
-  if FLimitFPS then
-  begin
-    if GetTickCount64-FLastPaint>MaxRate then
-      Core.OnPaint()
-    else
-      Sleep(1);
-    FLastPaint:= GetTickCount64;
-  end
-  else
-    Core.OnPaint();
+  Core.OnPaint;
 end;
 
 procedure TAGCanvas.DoOnResize;

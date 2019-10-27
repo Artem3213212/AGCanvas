@@ -6,6 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   DoubleBuffered = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   ParentDoubleBuffered = False
   LCLVersion = '2.1.0.0'

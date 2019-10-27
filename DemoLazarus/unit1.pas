@@ -18,6 +18,7 @@ type
   TForm1 = class(TForm)
     Panel1: TPanel;
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     FTestCanvas:TAGCanvas;
@@ -69,6 +70,11 @@ begin
   FTestCanvas:= TAGCanvas.Create(Self);
   FTestCanvas.Parent:=Self;
   FTestCanvas.Align:=alClient;
+end;
+
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+  //
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
