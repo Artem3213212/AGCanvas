@@ -81,9 +81,9 @@
       <Filename Value="demo.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\Imaging\Source;..\Imaging\Extras\Extensions"/>
-      <Libraries Value="..\Imaging\Extras\Extensions\J2KObjects;..\Imaging\Extras\Extensions\LibTiff\Compiled"/>
-      <OtherUnitFiles Value="..\Imaging\Source;..\Imaging\Source\JpegLib;..\Imaging\Source\ZLib;..\Imaging\Extras\Extensions;..\Imaging\Extras\Extensions\LibTiff;..\Sources;..\dglOpenGL;..\textsuite"/>
+      <IncludeFiles Value="$(ProjOutDir);..\Imaginglib;..\Imaginglib\Source;..\Imaginglib\Extras\Extensions"/>
+      <Libraries Value="..\imaginglib\Source;..\imaginglib\Extensions\J2KObjects;..\imaginglib\Extensions\LibTiff\Compiled"/>
+      <OtherUnitFiles Value="..\imaginglib\Source;..\imaginglib\Source\JpegLib;..\imaginglib\Source\ZLib;..\imaginglib\Extras\Extensions;..\imaginglib\Extensions\LibTiff;..\imaginglib\Extensions;..\Sources;..\dglOpenGL;..\textsuite"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
