@@ -1,4 +1,3 @@
-{%RunFlags MESSAGES+}
 program demo;
 
 {$mode objfpc}{$H+}

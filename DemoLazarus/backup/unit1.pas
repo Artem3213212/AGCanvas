@@ -67,6 +67,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FTestCanvas:= TAGCanvas.Create(Self);
+  Sleep(1000);
   pic:=FTestCanvas.Core.CreateBitMapFromFile('8.bmp');
   FTestCanvas.Core.drawer:= TestDrawer;
   FTestCanvas.Parent:=Self;

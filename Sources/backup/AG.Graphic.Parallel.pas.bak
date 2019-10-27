@@ -102,9 +102,9 @@ end;
 
 constructor TAGParallelGraphicCore.Create();
 begin
-  inherited Create();              
-  TotalStartedWork:=0;
+  inherited Create();
   GraphicThread:=TAGGraphicThread.Create;
+  TotalStartedWork:=0;
 end;
 
 destructor TAGParallelGraphicCore.Destroy();
