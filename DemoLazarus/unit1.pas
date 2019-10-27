@@ -67,14 +67,17 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FTestCanvas:= TAGCanvas.Create(Self);
-  pic:=FTestCanvas.Core.CreateBitMapFromFile('8.bmp');
-  FTestCanvas.Core.drawer:= TestDrawer;
   FTestCanvas.Parent:=Self;
   FTestCanvas.Align:=alClient;
 end;
 
 procedure TForm1.FormShow(Sender: TObject);
+var
+  fn: string;
 begin
+  fn:= ExtractFilePath(Application.ExeName)+'test.bmp';
+  pic:=FTestCanvas.Core.CreateBitMapFromFile(fn);
+  FTestCanvas.Core.drawer:= TestDrawer;
 end;
 
 end.

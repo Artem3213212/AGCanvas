@@ -77,6 +77,9 @@
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="demo.exe"/>
+    </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\Imaging\Source;..\Imaging\Extras\Extensions"/>
       <Libraries Value="..\Imaging\Extras\Extensions\J2KObjects;..\Imaging\Extras\Extensions\LibTiff\Compiled"/>
