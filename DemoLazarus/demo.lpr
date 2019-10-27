@@ -7,7 +7,7 @@ uses
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
-  Forms, unit1;
+  Forms, Interfaces, unit1;
 
 {$R *.res}
 
