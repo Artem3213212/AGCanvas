@@ -75,6 +75,7 @@ procedure TForm1.FormShow(Sender: TObject);
 var
   fn: string;
 begin
+  FTestCanvas.Core.BackColor:= BlueColor;
   fn:= ExtractFilePath(Application.ExeName)+'test.bmp';
   pic:=FTestCanvas.Core.CreateBitMapFromFile(fn);
   FTestCanvas.Core.drawer:= TestDrawer;
