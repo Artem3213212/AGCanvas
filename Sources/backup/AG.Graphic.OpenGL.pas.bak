@@ -149,6 +149,7 @@ begin
   SetPixelFormat(DC,ChoosePixelFormat(DC,@pf),@pf);
   DoGraphicSync(Pointer(self),Init_SubCall_InitGraphic);
   LoadFont('Lucida Console','EN-en',24,AGFont_SystemFont);
+  Init2D();
 end;
              
 procedure OnPaint_SubCall_InitGraphic(Data:Pointer);
@@ -212,6 +213,8 @@ begin
   m[3,2]:=0;
   m[3,3]:=1;
 
+  glMatrixMode(GL_TEXTURE);
+  glLoadIdentity;
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity;
   glMatrixMode(GL_PROJECTION);
@@ -279,7 +282,7 @@ begin
   begin
     Font^:=FontCreator.GetFontByName(Name^,Size,[],TtsAntiAliasing.tsAANormal);
 
-    block:=Renderer.BeginBlock(10,10,8,8,[TtsBlockFlag.tsBlockFlagWordWrap]);
+    block:=Renderer.BeginBlock(-10,-10,8,8,[TtsBlockFlag.tsBlockFlagWordWrap]);
     try
       block.ChangeFont(Font^);
       block.ChangeColor(tsColor4f(1,1,1,1));

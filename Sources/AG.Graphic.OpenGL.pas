@@ -212,6 +212,8 @@ begin
   m[3,2]:=0;
   m[3,3]:=1;
 
+  glMatrixMode(GL_TEXTURE);
+  glLoadIdentity;
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity;
   glMatrixMode(GL_PROJECTION);

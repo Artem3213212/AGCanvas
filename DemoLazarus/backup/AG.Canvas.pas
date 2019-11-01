@@ -37,7 +37,7 @@ implementation
 { TAGCanvas }
 function TAGCanvas.GetCore:TAGGraphicCore;
 begin
-  if FCore.hwnd=0 then
+  if Core.hwnd=0 then
     raise Exception.Create('Core not loaded')
   else
     Result:=FCore;
