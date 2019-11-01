@@ -279,7 +279,7 @@ begin
   begin
     Font^:=FontCreator.GetFontByName(Name^,Size,[],TtsAntiAliasing.tsAANormal);
 
-    block:=Renderer.BeginBlock(-10,-10,8,8,[TtsBlockFlag.tsBlockFlagWordWrap]);
+    block:=Renderer.BeginBlock(10,10,8,8,[TtsBlockFlag.tsBlockFlagWordWrap]);
     try
       block.ChangeFont(Font^);
       block.ChangeColor(tsColor4f(1,1,1,1));

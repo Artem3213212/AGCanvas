@@ -65,11 +65,13 @@ procedure TAGParallelGraphicCore.TAGGraphicThread.Execute();
 var
   WorkData:TAGWork;
 begin
-  while(WorkQueue.PopItem(WorkData)=wrSignaled)and not Terminated do
-  begin
-    WorkData.Work(WorkData.Data);
-    inc(TotalDuedWork);
-  end;
+  while not Terminated do
+    if WorkQueue.PopItemTimeout(WorkData,200)=wrSignaled then
+    begin
+      WorkData.Work(WorkData.Data);
+      inc(TotalDuedWork);
+    end;
+  inherited;
 end;
                                          
 {TAGParallelGraphicCore}
@@ -112,8 +114,7 @@ begin
   Flush();
   GraphicThread.Terminate;
   while not GraphicThread.Finished do
-    TThread.Sleep(1);
-  TThread.Sleep(1000);
+    TThread.Sleep(1);                 
   FreeAndNil(GraphicThread.WorkQueue);
   FreeAndNil(GraphicThread);
   inherited;
