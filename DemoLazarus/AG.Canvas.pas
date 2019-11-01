@@ -17,6 +17,7 @@ type
   TAGCanvas = class(TCustomControl)
   private
     FCore: TAGGraphicCore;
+    FOnInited: TNotifyEvent;
   protected
     function GetCore:TAGGraphicCore;
     procedure Paint; override;
@@ -27,6 +28,7 @@ type
     property Core:TAGGraphicCore read GetCore;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property OnInited: TNotifyEvent read FOnInited write FOnInited;
   end;
 
 var
@@ -75,6 +77,8 @@ procedure TAGCanvas.CreateHandle;
 begin
   inherited;
   FCore.Init(400, 300, Handle);
+  if Assigned(FOnInited) then
+    FOnInited(Self);
 end;
 
 end.
