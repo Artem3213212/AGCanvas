@@ -47,7 +47,13 @@ const
   vec2:TAGScreenVector=(X:100;Y:100);
   vec3:TAGScreenVector=(X:500;Y:100);
   vecc0:TAGScreenVector=(X:50;Y:200);  
-  vecc:TAGScreenVector=(X:700;Y:700);
+  vecc:TAGScreenVector=(X:700;Y:700);  
+  vectrA1:TAGScreenVector=(X:5;Y:55);
+  vectrA2:TAGScreenVector=(X:55;Y:55);
+  vectrA3:TAGScreenVector=(X:55;Y:5);
+  vectrB1:TAGScreenVector=(X:5;Y:55);
+  vectrB2:TAGScreenVector=(X:55;Y:55);
+  vectrB3:TAGScreenVector=(X:55;Y:5);
 begin
   Core.DrawPoint(vec0,20,WiteColor);
   Core.DrawPoint(vec1,20,WiteColor);
@@ -61,6 +67,8 @@ begin
   Core.FillRectangle(pos1,WiteColor);
   Core.FillElips(vecc+vec2,vecc0,GreenColor);
   Core.DrawBitmap(pos2,pic,255,True);
+  Core.FillTriangle(vectrB1,vectrB2,vectrB3,RedColor);  
+  Core.DrawTriangle(vectrA1,vectrA2,vectrA3,3,GreenColor);
 end;
 
 { TForm1 }

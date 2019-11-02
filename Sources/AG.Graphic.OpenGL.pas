@@ -52,7 +52,8 @@ type
       procedure DrawBitmap(coord:TAGCoord;bitmap:TAGBitMap;opacity:byte=255;f:boolean=False);override;
       procedure FillRectangle(rect:TAGCoord;brush:TAGColor);override;
       procedure FillElips(point,radaii:TAG2DVector;brush:TAGColor);override;
-      procedure DrawTriangle(a,b,c:TAG2DVector);
+      procedure DrawTriangle(a,b,c:TAG2DVector;size:word;brush:TAGColor);override;
+      procedure FillTriangle(a,b,c:TAG2DVector;brush:TAGColor);override;
   end;
 
 implementation
@@ -110,7 +111,10 @@ begin
     begin       
       ReadOpenGLCore;
       glViewport(0,0,Size.X,Size.Y);
-      glEnable(GL_POINT_SMOOTH);
+      glEnable(GL_POINT_SMOOTH);     
+      glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
+      glEnable(GL_LINE_SMOOTH);
+      glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
       glEnable(GL_TEXTURE_2D);        
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -650,9 +654,69 @@ begin
   DoGraphic(Data,FillElips_SubCall);
 end;
 
-procedure TAGOpenGlGraphicCore.DrawTriangle(a,b,c:TAG2DVector);
+type
+  TDrawTriangle_SubCallData=packed record
+    arr:array[0..2]of TAG2DVector;
+    Size:word;
+    Color:TAGColor;
+  end;
+  PDrawTriangle_SubCallData=^TDrawTriangle_SubCallData;
+procedure DrawTriangle_SubCall(Data:Pointer);
 begin
+  with PDrawTriangle_SubCallData(Data)^ do
+  begin
+    glColor4ubv(addr(Color));
+    glLineWidth(Size);
+    glBegin(GL_LINE_LOOP);
+    glVertex2fv(@arr[0]);   
+    glVertex2fv(@arr[1]);
+    glVertex2fv(@arr[2]);
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.DrawTriangle(a,b,c:TAG2DVector;size:word;brush:TAGColor); 
+var
+  Data:PDrawTriangle_SubCallData;
+begin
+  GetMem(Data,SizeOf(TDrawTriangle_SubCallData));
+  Data.arr[0]:=a;
+  Data.arr[1]:=b;
+  Data.arr[2]:=c;
+  Data.Color:=brush;  
+  Data.Size:=size;
+  DoGraphic(Data,DrawTriangle_SubCall);
+end;
 
+type
+  TFillTriangle_SubCallData=packed record
+    arr:array[0..2]of TAG2DVector;
+    Color:TAGColor;
+  end;
+  PFillTriangle_SubCallData=^TFillTriangle_SubCallData;
+procedure FillTriangle_SubCall(Data:Pointer);
+begin
+  with PFillTriangle_SubCallData(Data)^ do
+  begin
+    glColor4ubv(addr(Color));
+    glBegin(GL_TRIANGLES);
+    glVertex2fv(@arr[0]);
+    glVertex2fv(@arr[1]);
+    glVertex2fv(@arr[2]);
+    glEnd;
+  end;
+  Freemem(Data);
+end;
+procedure TAGOpenGlGraphicCore.FillTriangle(a,b,c:TAG2DVector;brush:TAGColor);  
+var
+  Data:PFillTriangle_SubCallData;
+begin
+  GetMem(Data,SizeOf(TFillTriangle_SubCallData));
+  Data.arr[0]:=a;
+  Data.arr[1]:=b;
+  Data.arr[2]:=c;
+  Data.Color:=brush;
+  DoGraphic(Data,FillTriangle_SubCall);
 end;
 
 initialization

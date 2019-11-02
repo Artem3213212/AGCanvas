@@ -103,9 +103,9 @@ begin
   FillElips(TAG2DVector(point),TAG2DVector(radaii),brush);
 end;
 
-procedure TAGGraphicCore.DrawTriangle(a,b,c:TAGScreenVector;size:word;brush:TAGColor);
+procedure TAGGraphicCore.DrawTriangle(a,b,c:TAGScreenVector;brush:TAGColor);
 begin
-  DrawTriangle(TAG2DVector(a),TAG2DVector(b),TAG2DVector(c),size,brush);
+  DrawTriangle(TAG2DVector(a),TAG2DVector(b),TAG2DVector(c),brush);
 end;
 
 procedure TAGGraphicCore.FillTriangle(a,b,c:TAGScreenVector;brush:TAGColor);
