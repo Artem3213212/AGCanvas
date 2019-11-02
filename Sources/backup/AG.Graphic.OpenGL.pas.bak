@@ -149,7 +149,6 @@ begin
   SetPixelFormat(DC,ChoosePixelFormat(DC,@pf),@pf);
   DoGraphicSync(Pointer(self),Init_SubCall_InitGraphic);
   LoadFont('Lucida Console','EN-en',24,AGFont_SystemFont);
-  Init2D();
 end;
              
 procedure OnPaint_SubCall_InitGraphic(Data:Pointer);
@@ -276,7 +275,7 @@ begin
   m[3,1]:=1;
   m[3,2]:=0;
   m[3,3]:=1;
-  glLoadMatrixf(@m);
+  //glLoadMatrixf(@m);
 
   with PLoadFont_SubCallData(Data)^ do
   begin
@@ -293,8 +292,8 @@ begin
     glBindTexture(GL_TEXTURE_2D,0);
   end;
                                          
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix;
+  //glMatrixMode(GL_PROJECTION);
+  //glPopMatrix;
   Freemem(Data);
 end;
 procedure TAGOpenGlGraphicCore.LoadFont(Name,Local:string;Size:single;font:TAGFont);

@@ -70,7 +70,7 @@ begin
   FTestCanvas:= TAGCanvas.Create(Self);
   FTestCanvas.Parent:=Self;
   FTestCanvas.Align:=alClient;
-  FTestCanvas.OnInited:=CanvasInit;
+  FTestCanvas:=CanvasInit;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
