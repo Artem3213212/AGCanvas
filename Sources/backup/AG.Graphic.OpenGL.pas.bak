@@ -12,7 +12,7 @@ uses
   SysUtils,Classes,dglOpenGL,Windows,
   {$IFDEF VampyreIL}ImagingOpenGL,{$ENDIF}
   utsContext,utsTypes,utsTextBlock,utsFontCreatorGDI,utsFont,utsRendererOpenGL,utsUtils,
-  AG.Graphic.Parallel,AG.Types,
+  AG.Graphic,AG.Graphic.Parallel,AG.Types,
   //Init Formats
   Imaging,ImagingComponents,ImagingIO,ImagingUtility
   ,ImagingFormats;
@@ -41,14 +41,14 @@ type
       //2D                     
       procedure Init2D();
       function CreateBitMap(p:TStream):TAGBitMap;override;
-      procedure LoadFont(Name,Local:string;size:Single;font:TAGFont);override;
+      procedure LoadFont(Name,Local:string;size:Single;font:TAGFont;Style:TAGFontStyles=[]);override;
       procedure ReleaseBitMap(b:TAGBitMap);override;
       procedure DrawPoint(point:TAG2DVector;size:word;brush:TAGColor);override;
       procedure DrawRectangle(rect:TAGCoord;size:word;brush:TAGColor);override;
       procedure DrawElips(point,radaii:TAG2DVector;size:word;brush:TAGColor);override;
       procedure DrawLine(point0,point1:TAG2DVector;size:word;brush:TAGColor);override;
-      procedure DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);override;    
-      procedure DrawText(text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);override;
+      procedure DrawText(const text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);override;
+      procedure DrawText(const text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);override;
       procedure DrawBitmap(coord:TAGCoord;bitmap:TAGBitMap;opacity:byte=255;f:boolean=False);override;
       procedure FillRectangle(rect:TAGCoord;brush:TAGColor);override;
       procedure FillElips(point,radaii:TAG2DVector;brush:TAGColor);override;
@@ -111,9 +111,10 @@ begin
     begin       
       ReadOpenGLCore;
       glViewport(0,0,Size.X,Size.Y);
-      glEnable(GL_POINT_SMOOTH); 
-      glEnable(GL_LINE_SMOOTH);   
-      glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+      glEnable(GL_POINT_SMOOTH);     
+      glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
+      glEnable(GL_LINE_SMOOTH);
+      glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
       glEnable(GL_TEXTURE_2D);        
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -250,6 +251,7 @@ type
     Name:^String;
     FontCreator:TtsFontCreatorGDI;
     Renderer:TtsRendererOpenGL;
+    Style:TtsFontStyles;
   end;
   PLoadFont_SubCallData=^TLoadFont_SubCallData;
 procedure LoadFont_SubGraphicCall(Data:Pointer);
@@ -263,7 +265,7 @@ begin
 
   with PLoadFont_SubCallData(Data)^ do
   begin
-    Font^:=FontCreator.GetFontByName(Name^,Size,[],TtsAntiAliasing.tsAANormal);
+    Font^:=FontCreator.GetFontByName(Name^,Size,Style,TtsAntiAliasing.tsAANormal);
 
     block:=Renderer.BeginBlock(-10,-10,8,8,[TtsBlockFlag.tsBlockFlagWordWrap]);
     try
@@ -278,7 +280,7 @@ begin
 
   Freemem(Data);
 end;
-procedure TAGOpenGlGraphicCore.LoadFont(Name,Local:string;Size:single;font:TAGFont);
+procedure TAGOpenGlGraphicCore.LoadFont(Name,Local:string;Size:single;font:TAGFont;Style:TAGFontStyles=[]);
 var
   Data:PLoadFont_SubCallData;
 begin
@@ -288,6 +290,7 @@ begin
   Data.Size:=Round(Size);
   Data.FontCreator:=tsFontCreator;
   Data.Renderer:=tsRenderer;
+  Data.Style:=Style;
   DoGraphicSync(Data,LoadFont_SubGraphicCall);
 end;
                
@@ -455,8 +458,8 @@ type
     Text:PWideChar;
     position:TAGScreenCoord;
     Render:TtsRendererOpenGL;
-    font:TtsFont;//GLuint;
-    size:word;
+    font:TtsFont;
+    Size:word;
     Color:TAGColor;
   end;
   PDrawText_SubCallData=^TDrawText_SubCallData;
@@ -476,17 +479,18 @@ begin
     m[0,2]:=0;
     m[0,3]:=0;
     m[1,0]:=0;
-    m[1,1]:=-1;
+    m[1,1]:=1;
     m[1,2]:=0;
     m[1,3]:=0;
     m[2,0]:=0;
     m[2,1]:=0;
-    m[2,2]:=0;
+    m[2,2]:=1;
     m[2,3]:=0;
-    m[3,0]:=-1;
-    m[3,1]:=1;
+    m[3,0]:=0;
+    m[3,1]:=0;
     m[3,2]:=0;
-    m[3,3]:=1;
+    m[3,3]:=font.Metric.Size/Size;
+    glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(@m[0,0]);
 
     with position do
@@ -503,11 +507,13 @@ begin
     Freemem(Text);   
     glBindTexture(GL_TEXTURE_2D,0);
     glMatrixMode(GL_PROJECTION);
-    glPopMatrix;
+    glPopMatrix;                
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity;
   end;
   Freemem(Data);
 end;
-procedure TAGOpenGlGraphicCore.DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);
+procedure TAGOpenGlGraphicCore.DrawText(const text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);
 var
   Data:PDrawText_SubCallData;
 begin
@@ -520,10 +526,10 @@ begin
   Data.Render:=tsRenderer;
   Data.Color:=brush;
   DoGraphic(Data,DrawText_SubCall);
-  Init2D;
+  //Init2D;
 end;
 
-procedure TAGOpenGlGraphicCore.DrawText(text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);
+procedure TAGOpenGlGraphicCore.DrawText(const text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);
 begin
   DrawText(text,TAGScreenCoord(position),size,font,brush);
 end;

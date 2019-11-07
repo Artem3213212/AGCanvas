@@ -7,11 +7,13 @@ interface
 {$ENDIF}
 
 uses
-  AG.Types,Classes,SysUtils;
+  AG.Types,Classes,SysUtils,utsTypes;
 
 type
   TAGGraphicCore=class;
-  TAGOnpantProcedure=procedure(Core:TAGGraphicCore);
+  TAGOnpantProcedure=procedure(Core:TAGGraphicCore)of object;
+  TAGFontStyle=TtsFontStyle;
+  TAGFontStyles=TtsFontStyles;
 
   TAGGraphicCore=class abstract
     protected
@@ -28,7 +30,7 @@ type
       //2D
       function CreateBitMap(p:TStream):TAGBitMap;virtual;abstract;
       function CreateBitMapFromFile(Name:String):TAGBitMap;virtual;
-      procedure LoadFont(Name,Local:string;size:single;font:TAGFont);virtual;abstract;
+      procedure LoadFont(Name,Local:string;size:single;font:TAGFont;Style:TAGFontStyles=[]);virtual;abstract;
       procedure ReleaseBitMap(b:TAGBitMap);virtual;abstract;
       procedure DrawPoint(point:TAGScreenVector;size:word;brush:TAGColor);overload;virtual;
       procedure DrawPoint(point:TAG2DVector;size:word;brush:TAGColor);overload;virtual;abstract;
@@ -38,8 +40,8 @@ type
       procedure DrawElips(point,radaii:TAG2DVector;size:word;brush:TAGColor);overload;virtual;abstract;
       procedure DrawLine(point0,point1:TAGScreenVector;size:word;brush:TAGColor);overload;virtual;
       procedure DrawLine(point0,point1:TAG2DVector;size:word;brush:TAGColor);overload;virtual;abstract;
-      procedure DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);overload;virtual;
-      procedure DrawText(text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);overload;virtual;abstract;
+      procedure DrawText(const text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);overload;virtual;
+      procedure DrawText(const text:string;position:TAGCoord;size:word;font:TAGFont;brush:TAGColor);overload;virtual;abstract;
       procedure DrawBitmap(coord:TAGScreenCoord;bitmap:TAGBitMap;Opacity:byte=255;Smooth:boolean=False);overload;virtual;
       procedure DrawBitmap(coord:TAGCoord;bitmap:TAGBitMap;Opacity:byte=255;Smooth:boolean=False);overload;virtual;abstract;
       procedure FillRectangle(rect:TAGScreenCoord;brush:TAGColor);overload;virtual;
@@ -83,7 +85,7 @@ begin
   DrawLine(TAG2DVector(point0),TAG2DVector(point1),size,brush);
 end;
 
-procedure TAGGraphicCore.DrawText(text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);
+procedure TAGGraphicCore.DrawText(const text:string;position:TAGScreenCoord;size:word;font:TAGFont;brush:TAGColor);
 begin
   DrawText(text,TAGCoord(position),size,font,brush);
 end;

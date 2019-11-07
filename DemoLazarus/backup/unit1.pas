@@ -20,6 +20,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure CanvasInit(Sender: TObject);
+    procedure TestDrawer(Core:TAGGraphicCore);
   private
     FTestCanvas:TAGCanvas;
   public
@@ -37,7 +38,7 @@ var
   pic:TAGBitMap;
   s:string='Hello...';
 
-procedure TestDrawer(Core:TAGGraphicCore);
+procedure TForm1.TestDrawer(Core:TAGGraphicCore);
 const
   pos0:TAGScreenCoord=(X:300;Y:0;W:100;H:4000);
   pos1:TAGScreenCoord=(X:1000;Y:30;W:500;H:30);
@@ -48,18 +49,18 @@ const
   vec3:TAGScreenVector=(X:500;Y:100);
   vecc0:TAGScreenVector=(X:50;Y:200);  
   vecc:TAGScreenVector=(X:700;Y:700);  
-  vectrA1:TAGScreenVector=(X:0;Y:50);
-  vectrA2:TAGScreenVector=(X:50;Y:50);
-  vectrA3:TAGScreenVector=(X:50;Y:0);
-  vectrB1:TAGScreenVector=(X:0;Y:50);
-  vectrB2:TAGScreenVector=(X:50;Y:50);
-  vectrB3:TAGScreenVector=(X:50;Y:0);
+  vectrA1:TAGScreenVector=(X:5;Y:55);
+  vectrA2:TAGScreenVector=(X:55;Y:55);
+  vectrA3:TAGScreenVector=(X:55;Y:5);
+  vectrB1:TAGScreenVector=(X:5;Y:55);
+  vectrB2:TAGScreenVector=(X:55;Y:55);
+  vectrB3:TAGScreenVector=(X:55;Y:5);
 begin
   Core.DrawPoint(vec0,20,WiteColor);
   Core.DrawPoint(vec1,20,WiteColor);
   Core.DrawPoint(vec2,20,WiteColor);
   Core.DrawPoint(vec3,20,WiteColor);
-  Core.DrawText(s,pos0,20,0,WiteColor);
+  Core.DrawText(s,pos0,16,0,WiteColor);
   Core.DrawRectangle(TAGscreenCoord.Create(1000,100,400,400),20,WiteColor);
   Core.DrawLine(vec1,vec2,20,WiteColor);
   Core.DrawElips(vecc,vecc0,20,GreenColor);
@@ -93,7 +94,8 @@ begin
   FTestCanvas.Core.BackColor:= BlueColor;
   fn:= ExtractFilePath(Application.ExeName)+'test.bmp';
   pic:=FTestCanvas.Core.CreateBitMapFromFile(fn);
-  FTestCanvas.Core.drawer:= TestDrawer;
+  FTestCanvas.Core.drawer:= TestDrawer;     
+  FTestCanvas.Core.LoadFont('Lucida Console','EN-en',24,AGFont_SystemFont,[TAGFontStyle.tsStyleStrikeout]);
 end;
 
 end.
